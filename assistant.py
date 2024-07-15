@@ -1,15 +1,16 @@
 import base64
-from threading import Lock, thread
+from threading import Lock, Thread
 
 import cv2
 from cv2 import VideoCapture, imencode
 from dotenv import load_dotenv
-from langchain.prompts import ChatPromptsTemplate, MessagePlaceholder
+from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.schema.messages import SystemMessage
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables.hostory import RunnableWithMessageHistory
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_core.runnables.history import RunnableWithMessageHistory
+#from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openai import ChatOpenAI
 import openai
 from pyaudio import PyAudio, paInt16
 from speech_recognition import Microphone, Recognizer, UnknownValueError
@@ -60,7 +61,7 @@ class WebcamStream:
 
 class Assistant:
     def __init__(self, model):
-        self.chain = slef._create_inference_chain(model)
+        self.chain = self._create_inference_chain(model)
 
     def answer(self, prompt, image):
         if not prompt:
@@ -98,7 +99,7 @@ class Assistant:
         Be friendly and helpful. Show some personality. Do not be too formal.
         """
 
-        prompt_template = ChatPromptsTemplate.from_messages(
+        prompt_template = ChatPromptTemplate.from_messages(
             [
                 SystemMessage(content = SYSTEM_PROMPT),
                 MessagesPlaceholder(variable_name="chat_history"),
@@ -127,8 +128,8 @@ class Assistant:
 
 webcam_stream = WebcamStream().start()
 
-model = ChatGoogleGenerativeAI(model="gemini-1.5-flash-latest")
-# model = ChatOpenAI(model="gpt-4o")
+#model = ChatGoogleGenerativeAI(model="gemini-1.5-flash-latest")
+model = ChatOpenAI(model="gpt-4o")
 
 
 assistant = Assistant(model)
